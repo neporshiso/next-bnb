@@ -1,0 +1,18 @@
+[
+    {
+        "picture": "/img/houses/1.jpg",
+        "type": "Entire Home",
+        "town": "Armenia",
+        "title": "Romantic Cabana with view",
+        "rating": 4.93,
+        "reviewsCount": 248
+    },
+    {
+        "picture": "/img/houses/2.jpg",
+        "type": "Entire Home",
+        "town": "Joshua Tree",
+        "title": "The Joshua Tree House",
+        "rating": 4.87,
+        "reviewsCount": 479
+    }
+]
