@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useStoreActions } from 'easy-peasy'
 import axios from "axios";
 
 const RegistrationModal = props => {
@@ -6,21 +7,25 @@ const RegistrationModal = props => {
     const [password, setPassword] = useState("");
     const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
+    const setUser = useStoreActions(actions => actions.user.setUser)
+    const setHideModal = useStoreActions(actions => actions.modals.setHideModal)
+
     const submit = async e => {
+        e.preventDefault()
         try {
             const response = await axios.post("/api/auth/register", {
                 email,
                 password,
                 passwordConfirmation
             });
-            console.log(response)
-            e.preventDefault()
             if (response.data.status === "error") {
                 alert(response.data.message);
                 return;
             }
-        } catch (err) {
-            alert(err.response.data.message);
+            setUser(email)
+            setHideModal()
+        } catch (error) {
+            alert(error.response.data.message);
             return;
         }
     };
@@ -30,10 +35,7 @@ const RegistrationModal = props => {
             <h2>Sign up</h2>
             <div>
                 <form
-                    onSubmit={e => {
-                        e.preventDefault();
-                        submit();
-                    }}
+                    onSubmit={e => submit(e)}
                 >
                     <input
                         id="email"

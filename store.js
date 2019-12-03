@@ -21,6 +21,12 @@ export default createStore({
             state.showLoginModal = false
             state.showRegistrationModal = true
         })
+    },
+    user: {
+        user: null,
+        setUser: action((state, payload) => {
+            state.user = payload;
+        })
     }
 })
 

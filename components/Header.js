@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { useStoreActions } from "easy-peasy";
+import { useStoreActions, useStoreState } from "easy-peasy";
+import axios from "axios";
 
 const Header = () => {
     const setShowLoginModal = useStoreActions(
@@ -9,6 +10,14 @@ const Header = () => {
     const setShowRegistrationModal = useStoreActions(
         actions => actions.modals.setShowRegistrationModal
     );
+
+    const user = useStoreState(state => state.user.user);
+    const setUser = useStoreActions(actions => actions.user.setUser);
+
+    const logout = async () => {
+        await axios.post("/api/auth/logout");
+        setUser(null);
+    };
 
     return (
         <div className="nav-container">
@@ -20,16 +29,32 @@ const Header = () => {
 
             <nav>
                 <ul>
-                    <li>
-                        <a href="#" onClick={() => setShowRegistrationModal()}>
-                            Sign up
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" onClick={() => setShowLoginModal()}>
-                            Log in
-                        </a>
-                    </li>
+                    {user ? (
+                        <>
+                            <li className="username">{user}</li>
+                            <li>
+                                <a href="#" onClick={async () => logout()}>
+                                    Logout
+                                </a>
+                            </li>
+                        </>
+                    ) : (
+                        <>
+                            <li>
+                                <a
+                                    href="#"
+                                    onClick={() => setShowRegistrationModal()}
+                                >
+                                    Sign up
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" onClick={() => setShowLoginModal()}>
+                                    Log in
+                                </a>
+                            </li>
+                        </>
+                    )}
                 </ul>
             </nav>
 
@@ -64,6 +89,10 @@ const Header = () => {
 
                 ul {
                     float: right;
+                }
+
+                .username {
+                    padding: 1em 0.5em;
                 }
             `}</style>
         </div>

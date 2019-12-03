@@ -8,7 +8,7 @@ const handle = nextApp.getRequestHandler();
 
 const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
-const bodyParser = require('body-parser')
+const bodyParser = require("body-parser");
 
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
@@ -30,7 +30,7 @@ passport.use(
         async function(email, password, done) {
             if (!email || !password) {
                 done("Email and password required", null);
-                return
+                return;
             }
 
             const user = await User.findOne({ where: { email: email } });
@@ -64,8 +64,8 @@ passport.deserializeUser((email, done) => {
 
 nextApp.prepare().then(() => {
     const server = express();
-    
-    server.use(bodyParser.json())
+
+    server.use(bodyParser.json());
     server.use(
         session({
             secret: "343ji43j4n3jn4jk3n",
@@ -82,39 +82,90 @@ nextApp.prepare().then(() => {
         passport.session()
     );
 
-    server.post('/api/auth/register', async (req, res) => {
-        const { email, password, passwordConfirmation } = req.body
-    
+    server.post("/api/auth/register", async (req, res) => {
+        const { email, password, passwordConfirmation } = req.body;
+
         if (password !== passwordConfirmation) {
             res.end(
-                JSON.stringify({ status: 'error', message: 'Passwords do not match' })
-            )
-            return
+                JSON.stringify({
+                    status: "error",
+                    message: "Passwords do not match"
+                })
+            );
+            return;
         }
-    
+
         try {
-            const user = await User.create({ email, password })
-    
+            const user = await User.create({ email, password });
+
             req.login(user, err => {
                 if (err) {
-                    res.statusCode = 500
-                    res.end(JSON.stringify({ status: 'error', message: err }))
-                    return
+                    res.statusCode = 500;
+                    res.end(JSON.stringify({ status: "error", message: err }));
+                    return;
                 }
-    
+
                 return res.end(
-                    JSON.stringify({ status: 'success', message: 'Logged in' })
-                )
-            })
+                    JSON.stringify({ status: "success", message: "Logged in" })
+                );
+            });
         } catch (error) {
-            res.statusCode = 500
-            let message = 'An error occurred'
-            if (error.name === 'SequelizeUniqueConstraintError') {
-                message = 'User already exists'
+            res.statusCode = 500;
+            let message = "An error occurred";
+            if (error.name === "SequelizeUniqueConstraintError") {
+                message = "User already exists";
             }
-            res.end(JSON.stringify({ status: 'error', message }))
+            res.end(JSON.stringify({ status: "error", message }));
         }
-    })
+    });
+
+    server.post("/api/auth/logout", (req, res) => {
+        req.logout();
+        req.session.destroy();
+        return res.status(200).end(
+            JSON.stringify({
+                status: "success",
+                message: "Successfully logged out."
+            })
+        );
+    });
+
+    server.post("/api/auth/login", async (req, res) => {
+        passport.authenticate("local", (err, user, info) => {
+            if (err) {
+                res.status(500).end(
+                    JSON.stringify({ status: "error", message: err })
+                );
+                return;
+            }
+
+            if (!user) {
+                res.status(500).end(
+                    JSON.stringify({
+                        status: "error",
+                        message: "No user matching credentials"
+                    })
+                );
+                return;
+            }
+
+            req.login(user, err => {
+                if (err) {
+                    res.status(500).end(
+                        JSON.stringify({ status: "error", message: err })
+                    );
+                    return;
+                }
+
+                return res.end(
+                    JSON.stringify({
+                        status: "success",
+                        message: "Logged in"
+                    })
+                );
+            });
+        })(req, res, next);
+    });
 
     server.all("*", (req, res) => {
         return handle(req, res);
