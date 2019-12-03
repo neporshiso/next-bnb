@@ -1,62 +1,73 @@
 import Link from "next/link";
+import { useStoreActions } from "easy-peasy";
 
-const Header = () => (
-    <div className="nav-container">
-        <Link href="/">
-            <a>
-                <img src="/images/logo.png" alt="next-bnb" />
-            </a>
-        </Link>
+const Header = () => {
+    const setShowLoginModal = useStoreActions(
+        actions => actions.modals.setShowLoginModal
+    );
 
-        <nav>
-            <ul>
-                <li>
-                    <Link href="/register">
-                        <a>Sign up</a>
-                    </Link>
-                </li>
-                <li>
-                    <Link href="login">
-                        <a>Log in</a>
-                    </Link>
-                </li>
-            </ul>
-        </nav>
+    const setShowRegistrationModal = useStoreActions(
+        actions => actions.modals.setShowRegistrationModal
+    );
 
-        <style jsx>{`
-            ul {
-                margin: 0;
-                padding: 0;
-            }
+    return (
+        <div className="nav-container">
+            <Link href="/">
+                <a>
+                    <img src="/images/logo.png" alt="next-bnb" />
+                </a>
+            </Link>
 
-            li {
-                display: block;
-                float: left;
-            }
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#" onClick={() => setShowRegistrationModal()}>
+                            Sign up
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onClick={() => setShowLoginModal()}>
+                            Log in
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
-            a {
-                text-decoration: none;
-                display: block;
-                margin-right: 15px;
-                color: #333;
-            }
-            nav a {
-                padding: 1em 0.5em;
-            }
-            .nav-container {
-                border-bottom: 2px solid #eee;
-                height: 50px;
-            }
+            <style jsx>{`
+                ul {
+                    margin: 0;
+                    padding: 0;
+                }
 
-            img {
-                float: left;
-            }
+                li {
+                    display: block;
+                    float: left;
+                }
 
-            ul {
-                float: right;
-            }
-        `}</style>
-    </div>
-);
+                a {
+                    text-decoration: none;
+                    display: block;
+                    margin-right: 15px;
+                    color: #333;
+                }
+                nav a {
+                    padding: 1em 0.5em;
+                }
+                .nav-container {
+                    border-bottom: 2px solid #eee;
+                    height: 50px;
+                }
+
+                img {
+                    float: left;
+                }
+
+                ul {
+                    float: right;
+                }
+            `}</style>
+        </div>
+    );
+};
 
 export default Header;

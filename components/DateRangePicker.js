@@ -32,7 +32,7 @@ const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 
-export default () => {
+export default ({ datesChanged }) => {
     const [startDate, setStartDate] = useState(today);
     const [endDate, setEndDate] = useState(tomorrow);
 
@@ -55,11 +55,12 @@ export default () => {
                     }}
                     onDayChange={day => {
                         setStartDate(day);
+                        const newEndDate = new Date(day);
                         if (numberOfNightsBetweenDates(day, endDate) < 1) {
-                            const newEndDate = new Date(day);
                             newEndDate.setDate(newEndDate.getDate() + 1);
                             setEndDate(newEndDate);
                         }
+                        datesChanged(day, newEndDate);
                     }}
                 />
             </div>
@@ -83,6 +84,7 @@ export default () => {
                     }}
                     onDayChange={day => {
                         setEndDate(day);
+                        datesChanged(startDate, day);
                     }}
                 />
             </div>

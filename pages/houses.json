@@ -5,6 +5,7 @@
         "type": "Entire Home",
         "town": "Armenia",
         "title": "Romantic Cabana with view",
+        "price": "99.00",
         "rating": 4.93,
         "reviewsCount": 248,
         "superhost": true,
@@ -35,6 +36,7 @@
         "type": "Entire Home",
         "town": "Joshua Tree",
         "title": "The Joshua Tree House",
+        "price": "80.00",
         "rating": 4.87,
         "reviewsCount": 479
     }
