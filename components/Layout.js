@@ -10,7 +10,6 @@ const Layout = props => {
     const showRegistrationModal = useStoreState(
         state => state.modals.showRegistrationModal
     );
-
     const setHideModal = useStoreActions(
         actions => actions.modals.setHideModal
     );
@@ -32,7 +31,7 @@ const Layout = props => {
                         {showLoginModal && (
                             <LoginModal
                                 showSignup={() => {
-                                    setShowRegistrationModal()
+                                    setShowRegistrationModal();
                                 }}
                             />
                         )}

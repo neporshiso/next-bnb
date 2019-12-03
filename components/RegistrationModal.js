@@ -1,15 +1,29 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import axios from "axios";
 
 const RegistrationModal = props => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [passwordConfirmation, setPasswordConfirmation] = useState('')
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
-    const submit = async () => {
-        const response = await axios.post('/api/auth/register', { email, password, passwordConfirmation })
-        console.log(response)
-    }
+    const submit = async e => {
+        try {
+            const response = await axios.post("/api/auth/register", {
+                email,
+                password,
+                passwordConfirmation
+            });
+            console.log(response)
+            e.preventDefault()
+            if (response.data.status === "error") {
+                alert(response.data.message);
+                return;
+            }
+        } catch (err) {
+            alert(err.response.data.message);
+            return;
+        }
+    };
 
     return (
         <>
@@ -42,10 +56,7 @@ const RegistrationModal = props => {
                     <button>Sign up</button>
                     <p>
                         Already have an account?{" "}
-                        <a
-                            href="#"
-                            onClick={() => props.showLogin()}
-                        >
+                        <a href="#" onClick={() => props.showLogin()}>
                             Log in
                         </a>
                     </p>

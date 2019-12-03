@@ -8,20 +8,19 @@ const handle = nextApp.getRequestHandler();
 
 const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
-const User = require("./model").User;
-const sequelize = require("./model").sequelize;
+const bodyParser = require('body-parser')
+
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+
+const User = require("./model").User;
+const sequelize = require("./model").sequelize;
 
 const sessionStore = new SequelizeStore({
     db: sequelize
 });
-
 // automatically creates table in database. comment out after running once.
 // sessionStore.sync()
-
-
-
 passport.use(
     new LocalStrategy(
         {
@@ -30,8 +29,8 @@ passport.use(
         },
         async function(email, password, done) {
             if (!email || !password) {
-                done("Email and password rquired", null);
-                return;
+                done("Email and password required", null);
+                return
             }
 
             const user = await User.findOne({ where: { email: email } });
@@ -65,7 +64,8 @@ passport.deserializeUser((email, done) => {
 
 nextApp.prepare().then(() => {
     const server = express();
-
+    
+    server.use(bodyParser.json())
     server.use(
         session({
             secret: "343ji43j4n3jn4jk3n",
