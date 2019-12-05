@@ -1,4 +1,5 @@
 import Header from "./Header";
+import Head from "next/head";
 import Modal from "./Modal";
 import LoginModal from "./LoginModal";
 import RegistrationModal from "./RegistrationModal";
@@ -22,6 +23,9 @@ const Layout = props => {
 
     return (
         <>
+            <Head>
+                <script src="https://js.stripe.com/v3/"></script>
+            </Head>
             <Header />
             <div>
                 <main>{props.content}</main>
