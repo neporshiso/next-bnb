@@ -1,13 +1,14 @@
-import houses from "../houses.json";
+import fetch from "isomorphic-unfetch";
+import { useState } from "react";
+import { useStoreActions } from "easy-peasy";
+
 import Head from "next/head";
 import Layout from "../../components/Layout";
 import DateRangePicker from "../../components/DateRangePicker";
-import { useState } from "react";
-import { useStoreActions } from 'easy-peasy';
 
 const calcNumberOfNightsBetweenDates = (startDate, endDate) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const start = new Date(startDate); //clone
+    const end = new Date(endDate); //clone
     let dayCount = 0;
 
     while (end > start) {
@@ -19,21 +20,24 @@ const calcNumberOfNightsBetweenDates = (startDate, endDate) => {
 };
 
 const House = props => {
-    const [dateChosen, setDateChosen] = useState(false);
     const [
         numberOfNightsBetweenDates,
         setNumberOfNightsBetweenDates
     ] = useState(0);
-    const setShowLoginModal = useStoreActions(actions => actions.modals.setShowLoginModal)
+    const [dateChosen, setDateChosen] = useState(false);
+
+    const setShowLoginModal = useStoreActions(
+        actions => actions.modals.setShowLoginModal
+    );
 
     return (
         <Layout
             content={
                 <div className="container">
-                    <div>
-                        <Head>
-                            <title>{props.house.title}</title>
-                        </Head>
+                    <Head>
+                        <title>{props.house.title}</title>
+                    </Head>
+                    <article>
                         <img
                             src={props.house.picture}
                             width="100%"
@@ -43,11 +47,27 @@ const House = props => {
                             {props.house.type} - {props.house.town}
                         </p>
                         <p>{props.house.title}</p>
-                        <p>
-                            {props.house.rating} ({props.house.reviewsCount})
-                        </p>
-                    </div>
+                        {props.house.reviewsCount ? (
+                            <div className="reviews">
+                                <h3>{props.house.reviewsCount} Reviews</h3>
 
+                                {props.house.reviews.map((review, index) => {
+                                    return (
+                                        <div key={index}>
+                                            <p>
+                                                {new Date(
+                                                    review.createdAt
+                                                ).toDateString()}
+                                            </p>
+                                            <p>{review.comment}</p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <></>
+                        )}
+                    </article>
                     <aside>
                         <h2>Add dates for prices</h2>
                         <DateRangePicker
@@ -61,7 +81,6 @@ const House = props => {
                                 setDateChosen(true);
                             }}
                         />
-
                         {dateChosen && (
                             <div>
                                 <h2>Price per night</h2>
@@ -74,9 +93,14 @@ const House = props => {
                                         props.house.price
                                     ).toFixed(2)}
                                 </p>
-                                <button className="reserve" onClick={() => {
-                                    setShowLoginModal()
-                                }}>Reserve</button>
+                                <button
+                                    className="reserve"
+                                    onClick={() => {
+                                        setShowLoginModal();
+                                    }}
+                                >
+                                    Reserve
+                                </button>
                             </div>
                         )}
                     </aside>
@@ -87,7 +111,6 @@ const House = props => {
                             grid-template-columns: 60% 40%;
                             grid-gap: 30px;
                         }
-
                         aside {
                             border: 1px solid #ccc;
                             padding: 20px;
@@ -99,10 +122,14 @@ const House = props => {
     );
 };
 
-House.getInitialProps = ({ query }) => {
+House.getInitialProps = async ({ query }) => {
     const { id } = query;
+
+    const res = await fetch(`http://localhost:3000/api/houses/${id}`);
+    const house = await res.json();
+
     return {
-        house: houses.filter(house => house.id === id)[0]
+        house
     };
 };
 
