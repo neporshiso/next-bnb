@@ -136,7 +136,7 @@ const House = props => {
 
                       try {
                         const sessionResponse = await axios.post(
-                          '/api/stripe/session',
+                          'http://localhost:3000/api/stripe/session',
                           {
                             amount:
                               props.house.price * numberOfNightsBetweenDates
@@ -152,7 +152,7 @@ const House = props => {
                           sessionResponse.data.stripePublicKey
 
                         const reserveResponse = await axios.post(
-                          '/api/houses/reserve',
+                          'http://localhost:3000/api/houses/reserve',
                           {
                             houseId: props.house.id,
                             startDate,
