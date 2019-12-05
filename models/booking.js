@@ -12,8 +12,8 @@ Booking.init(
     },
     houseId: { type: Sequelize.DataTypes.INTEGER, allowNull: false },
     userId: { type: Sequelize.DataTypes.INTEGER, allowNull: false },
-    startDate: { type: Sequelize.DataTypes.DATE, allowNull: false },
-    endDate: { type: Sequelize.DataTypes.DATE, allowNull: false }
+    startDate: { type: Sequelize.DataTypes.DATEONLY, allowNull: false },
+    endDate: { type: Sequelize.DataTypes.DATEONLY, allowNull: false }
   },
   {
     sequelize,
