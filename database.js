@@ -1,9 +1,15 @@
-// database credentials
-const Database = {
-    user: 'neporshiso',
-    password: '',
-    host: 'localhost',
-    database: 'nextbnb'
-}
+// Database
+const user = "neporshiso";
+const password = "";
+const host = "localhost";
+const database = "nextbnb";
 
-module.exports = Database
+const Sequelize = require("sequelize");
+
+const sequelize = new Sequelize(database, user, password, {
+    host,
+    dialect: "postgres",
+    logging: false
+});
+
+module.exports = sequelize;
