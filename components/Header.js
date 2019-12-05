@@ -36,6 +36,11 @@ const Header = () => {
                                 <a href='/bookings'>Bookings</a>
                             </li>
                             <li>
+                                <Link href='/host'>
+                                    <a>Your Houses</a>
+                                </Link>
+                            </li>
+                            <li>
                                 <a href="#" onClick={async () => logout()}>
                                     Logout
                                 </a>
