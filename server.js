@@ -2,7 +2,9 @@ const express = require("express");
 const next = require("next");
 const dotenv = require("dotenv");
 dotenv.config();
-const sanitizeHtml = require('sanitize-html')
+const sanitizeHtml = require("sanitize-html");
+const fileupload = require("express-fileupload");
+const randomstring = require("randomstring");
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 const dev = process.env.NODE_ENV !== "production";
@@ -100,7 +102,8 @@ nextApp.prepare().then(() => {
             store: sessionStore
         }),
         passport.initialize(),
-        passport.session()
+        passport.session(),
+        fileupload()
     );
 
     server.post("/api/auth/register", async (req, res) => {
@@ -602,8 +605,8 @@ nextApp.prepare().then(() => {
         User.findOne({ where: { email: userEmail } }).then(user => {
             houseData.host = user.id;
             houseData.description = sanitizeHtml(houseData.description, {
-              allowedTags: [ 'b', 'i', 'em', 'strong', 'p', 'br' ]
-            })
+                allowedTags: ["b", "i", "em", "strong", "p", "br"]
+            });
             House.create(houseData).then(() => {
                 res.writeHead(200, {
                     "Content-Type": "application/json"
@@ -647,11 +650,13 @@ nextApp.prepare().then(() => {
 
                         return;
                     }
-                    houseData.description = sanitizeHtml(houseData.description, {
-                      allowedTags: [ 'b', 'i', 'em', 'strong', 'p', 'br' ]
-                    })
+                    houseData.description = sanitizeHtml(
+                        houseData.description,
+                        {
+                            allowedTags: ["b", "i", "em", "strong", "p", "br"]
+                        }
+                    );
                     House.update(houseData, {
-                      
                         where: {
                             id: houseData.id
                         }
@@ -692,6 +697,44 @@ nextApp.prepare().then(() => {
             });
         });
     });
+
+    server.post('/api/host/image', (req, res) => {
+        if (!req.session.passport) {
+          res.writeHead(403, {
+            'Content-Type': 'application/json'
+          })
+          res.end(
+            JSON.stringify({
+              status: 'error',
+              message: 'Unauthorized'
+            })
+          )
+    
+          return
+        }
+    
+        const image = req.files.image
+        const fileName = randomstring.generate(7) + image.name.replace(/\s/g, '')
+        const path = __dirname + '/public/images/houses/' + fileName
+        
+        image.mv(path, error => {
+          if (error) {
+            console.error(error)
+            res.writeHead(500, {
+              'Content-Type': 'application/json'
+            })
+            res.end(JSON.stringify({ status: 'error', message: error }))
+            return
+          }
+    
+          res.writeHead(200, {
+            'Content-Type': 'application/json'
+          })
+          res.end(
+            JSON.stringify({ status: 'success', path: '/images/houses/' + fileName })
+          )
+        })
+      })
 
     server.all("*", (req, res) => {
         return handle(req, res);
