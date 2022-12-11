@@ -20,7 +20,7 @@
     "date-fns": "^2.8.1",
     "dotenv": "^8.2.0",
     "easy-peasy": "^3.2.3",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-fileupload": "^1.1.6",
     "express-session": "^1.17.0",
     "isomorphic-unfetch": "^3.0.0",
